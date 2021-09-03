@@ -5,11 +5,13 @@ import org.springframework.stereotype.*;
 import org.springframework.data.jpa.repository.*;
 import java.util.*;
 
+
+
+
 @Repository
-public interface BookRepository extends JpaRepository<Book,Long>,BookRepositoryCustom {
+public interface LibraryUserRepository extends JpaRepository<LibraryUser, Long> {
 
+
+	// void deleteLibraryUserInBooksBorrowers()
 	
-
-	// public List<Book> findByBorrowers(LibraryUser lu);
-
 }

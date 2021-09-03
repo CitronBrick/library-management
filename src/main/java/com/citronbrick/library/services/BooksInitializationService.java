@@ -45,13 +45,16 @@ public class BooksInitializationService {
 
 			// JsonArrayBuilder jab = Json.createArrayBuilder();
 			JsonArray ja = jsonb.fromJson(body, JsonArray.class);
-
+			var k = 0;
 			for(JsonValue jv : ja) {
 				JsonObject jo = (JsonObject)jv;
 				String firstName = jo.getString("firstName");
 				String lastName = jo.getString("lastName");
 				int bookId = jo.getInt("idBook");
 				bookList.add(fetchBook(bookId, firstName, lastName));
+				if(++k > 10) {
+					break;
+				}
 				
 			}
 		} catch(IOException | InterruptedException e) {

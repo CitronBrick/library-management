@@ -13,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.*;
 
 import com.citronbrick.library.entities.*;
 import com.citronbrick.library.repositories.*;
+import com.citronbrick.library.services.*;
 
 
 @DataJpaTest
@@ -21,7 +22,10 @@ class EntityTests {
 	@Autowired
 	private BookRepository bookRepository;
 
+	@Autowired
+	private LibraryUserRepository libraryUserRepository;
 
+	
 	
 
 	@Test
@@ -39,6 +43,20 @@ class EntityTests {
 		Book foundBook = bookRepository.getById(id);
 
 		Assertions.assertThat(foundBook).isEqualToComparingOnlyGivenFields(b,"title","author");
+	}
+
+	@Test
+	void findByBorrower() {
+		LibraryUser lu = new LibraryUser("Sachin","password");
+		Book b = new Book("Oliver Twist","Mark Twain");
+		b.addBorrower(lu);
+		lu.addBook(b);
+		lu = libraryUserRepository.save(lu);
+		bookRepository.save(b);
+
+		var sachinBorrowedList = bookRepository.findByBorrowers(lu); 
+		System.out.println(sachinBorrowedList);
+		/*Assertions.assertThat(sachinBorrowedList).isNotEmpty();*/
 	}
 
 	/*@Test
