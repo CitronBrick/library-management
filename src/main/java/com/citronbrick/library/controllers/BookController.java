@@ -5,6 +5,7 @@ import com.citronbrick.library.repositories.*;
 
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.*;
+import org.springframework.http.*;
 
 import java.util.*; 
 
@@ -20,7 +21,21 @@ public class BookController {
 	@GetMapping("/all")
 	public List<Book> getAllBooks() {
 		return bookRepository.findAll();
+	}
+
+	@GetMapping("/{id}")
+	public Book getAllBooks(@PathVariable("id") Long bookId) {
+		// getById returns a child proxy Book object which does not play well with serialization for Spring web MVC
+		return  bookRepository.findById(bookId).get();
 	}  
+
+
+
+	@PostMapping("/create")
+	@ResponseStatus(code=HttpStatus.CREATED,reason="Book created")
+	public Book makeBook(@RequestBody Book b ) {
+		return bookRepository.save(b);
+	}
 
 }
 

@@ -15,8 +15,8 @@ public class Book implements Serializable {
 	private long id;
 	private String title;
 	private String author;
-	private int availableNbCopies;
-	private int totalNbCopies;
+	private int availableNbCopies = 1;
+	private int totalNbCopies = 1;
 
 	@ManyToMany
 	private List<LibraryUser> borrowers = new ArrayList<>();

@@ -45,23 +45,5 @@ class EntityTests {
 		Assertions.assertThat(foundBook).isEqualToComparingOnlyGivenFields(b,"title","author");
 	}
 
-	@Test
-	void findByBorrower() {
-		LibraryUser lu = new LibraryUser("Sachin","password");
-		Book b = new Book("Oliver Twist","Mark Twain");
-		b.addBorrower(lu);
-		lu.addBook(b);
-		lu = libraryUserRepository.save(lu);
-		bookRepository.save(b);
-
-		var sachinBorrowedList = bookRepository.findByBorrowers(lu); 
-		System.out.println(sachinBorrowedList);
-		/*Assertions.assertThat(sachinBorrowedList).isNotEmpty();*/
-	}
-
-	/*@Test
-	@Disabled
-	void atleastOneBookHasBeenPreCreated() {
-		Assertions.assertThat(bookRepository.count()).isGreaterThan(5);
-	}*/
+	
 }

@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.*;
 import java.util.*;
 
 @Repository
-public interface BookRepository extends JpaRepository<Book,Long>,BookRepositoryCustom {
+public interface BookRepository extends JpaRepository<Book,Long>{
 
 	
 
