@@ -31,10 +31,15 @@ public class BookController {
 
 
 
+	// using reaons in @ResponseStatus causes sendError to be called
+	// resulting in empty response in test
 	@PostMapping("/create")
-	@ResponseStatus(code=HttpStatus.CREATED,reason="Book created")
+	@ResponseStatus(code=HttpStatus.CREATED)
 	public Book makeBook(@RequestBody Book b ) {
-		return bookRepository.save(b);
+		System.out.println(b);
+		var res = bookRepository.save(b);
+		System.out.println(res);
+		return res;
 	}
 
 }
