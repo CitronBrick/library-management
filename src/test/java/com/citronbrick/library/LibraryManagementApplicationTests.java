@@ -22,14 +22,22 @@ class LibraryManagementApplicationTests {
 	@Autowired
 	private BookRepository bookRepository;
 
+	@Autowired
+	private LibraryUserRepository userRepository;
+
 
 	@Test
 	void contextLoads() {
 	}
 
 	@Test
-	void atleastOneBookHasBeenPreCreated() {
+	void atLeastOneBookHasBeenPreCreated() {
 		Assertions.assertThat(bookRepository.count()).isGreaterThan(5);
+	}
+
+	@Test
+	void atLeast20UsersHaveBeenPreCreated() {
+		Assertions.assertThat(userRepository.count()).isGreaterThanOrEqualTo(20);
 	}
 
 	

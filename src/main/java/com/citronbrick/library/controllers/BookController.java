@@ -36,10 +36,7 @@ public class BookController {
 	@PostMapping("/create")
 	@ResponseStatus(code=HttpStatus.CREATED)
 	public Book makeBook(@RequestBody Book b ) {
-		System.out.println(b);
-		var res = bookRepository.save(b);
-		System.out.println(res);
-		return res;
+		return bookRepository.save(b);
 	}
 
 }

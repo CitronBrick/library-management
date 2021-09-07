@@ -75,9 +75,9 @@ public class BookControllerTests {
 	@Test
 	public void testGetAllBooks() throws Exception {
 		mockMvc.perform(
-			MockMvcRequestBuilders.get("books/all")
+			MockMvcRequestBuilders.get("/books/all")
 		).andExpect(
-			MockMvcRequestBuilders.status().isOk()
+			MockMvcResultMatchers.status().isOk()
 		);
 	}
 
