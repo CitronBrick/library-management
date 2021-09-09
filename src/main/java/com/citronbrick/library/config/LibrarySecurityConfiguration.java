@@ -8,15 +8,15 @@ import org.springframework.http.*;
 import lombok.*;
 
 @NoArgsConstructor
-@Component 
+@EnableWebSecurity 
 public class LibrarySecurityConfiguration extends WebSecurityConfigurerAdapter {
-
-
+		
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
-			.antMatchers("/**").permitAll()
+			.mvcMatchers(HttpMethod.PUT,"/**").hasRole("LIBRARIAN")
 			.mvcMatchers(HttpMethod.POST,"/books/create").permitAll()
+			.mvcMatchers(HttpMethod.GET,"/**").permitAll()
 			.and().csrf().disable();
 	}
 	

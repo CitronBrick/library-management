@@ -49,6 +49,17 @@ public class BookService {
 		return false;
 	}
 
+	public boolean borrowBook(long bookId, long userId ) {
+		var b = bookRepository.findById(bookId).get();
+		var u = libraryUserRepository.findById(userId).get();
+		return borrowBook(b, u);
+	}
+
+	public boolean returnBook(long bookId, long userId ) {
+		var b = bookRepository.findById(bookId).get();
+		var u = libraryUserRepository.findById(userId).get();
+		return borrowBook(b, u);
+	}
 
 }
 

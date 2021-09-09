@@ -27,6 +27,7 @@ public class LibraryUsersInitializationService {
 	private LibraryUserRepository userRepository;
 	private RestTemplate restTemplate;
 	private Jsonb jsonb;
+	private Random rand = new Random();
 
 
 	public LibraryUsersInitializationService(@Autowired LibraryUserRepository userRepository, @Autowired Jsonb jsonb) {
@@ -41,13 +42,22 @@ public class LibraryUsersInitializationService {
 		this.restTemplate = new RestTemplate(List.<HttpMessageConverter<?>>of(new JsonbHttpMessageConverter(jsonb)));
 		ResponseEntity<RandomUserResults> re = this.restTemplate.getForEntity("https://randomuser.me/api/?results=20&inc=login", RandomUserResults.class);
 		RandomUserResults rur = re.getBody(); 
-		System.out.println(rur);
 		for(Login login : rur.results) {
 			LoginDetails ld = login.login;
-			userRepository.save(new LibraryUser(ld.username, ld.password));
+			var librarian = rand.nextInt(5) == 0;
+			userRepository.save(new LibraryUser(ld.username, ld.password, librarian));
+
 		}
+		userRepository.save(new LibraryUser("sachin", "password"));
+		userRepository.save(new LibraryUser("dravid", "password",true));
 	}
 
+
+
+	/* 
+		
+
+	*/
 
 
 	@Data

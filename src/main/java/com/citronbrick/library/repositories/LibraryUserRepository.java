@@ -13,5 +13,7 @@ public interface LibraryUserRepository extends JpaRepository<LibraryUser, Long> 
 
 
 	// void deleteLibraryUserInBooksBorrowers()
+
+	LibraryUser findByUsername(String username);
 	
 }

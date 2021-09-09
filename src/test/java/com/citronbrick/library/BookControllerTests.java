@@ -18,8 +18,11 @@ import org.springframework.test.web.servlet.request.*;
 import org.springframework.test.web.servlet.result.*;
 import org.springframework.web.context.*;
 import org.springframework.mock.web.*;
+import org.springframework.security.test.web.servlet.request.*;
+import org.springframework.security.core.userdetails.*;
 
 import java.util.*;
+import java.io.*;
 import javax.json.*;
 import javax.json.bind.*;
 
@@ -31,19 +34,28 @@ public class BookControllerTests {
 	@Autowired
 	private WebApplicationContext context;
 
+
 	@Autowired
 	private Jsonb jsonb;
+
+	@Autowired
+	private UserDetailsService uds;
 
 	// @Autowired MockHttpServletResponse response;
 
 
 	private MockMvc mockMvc;
+	private LibraryUser sachin;
+	private LibraryUser dravid;
 
 	@BeforeEach
 	public void setup() {
 		mockMvc = MockMvcBuilders
 			.webAppContextSetup(context)
 			.build();
+		sachin = (LibraryUser)uds.loadUserByUsername("sachin");
+		dravid = (LibraryUser)uds.loadUserByUsername("dravid");
+		System.out.println(dravid);
 	}
 
 
@@ -81,6 +93,40 @@ public class BookControllerTests {
 		);
 	}
 
-	
+
+	@Test
+	public void testBorrowBook() throws Exception {
+		var userId = sachin.getId();
+		Assertions.assertThat(sachin.isLibrarian()).isFalse();
+		System.out.println(sachin.getAuthorities());
+		sachin.setLibrarian(true);
+		System.out.println(dravid);
+		try {
+
+			mockMvc.perform(
+				MockMvcRequestBuilders
+					.put("/books/2/borrow/"+userId)
+					.with(SecurityMockMvcRequestPostProcessors.user(sachin))
+			).andExpect(
+				MockMvcResultMatchers.status().isForbidden()
+			);
+		} catch(UnsupportedOperationException uoe) {
+			uoe.printStackTrace();
+		}
+	}	
+
+	@Test
+	@Disabled
+	public void testSerial() {
+		var str = "[{\"key\":\"key1\", \"value\":\"value1\"}, {\"key\":\"key2\", \"value\":\"value2\"}, {\"key\":\"keyN\", \"value\":\"valueN\"}]";
+		var reader = Json.createReader(new StringReader(str));
+		var jarr = reader.readArray();
+		var res = new HashMap<String,String>();
+		for(JsonValue jv : jarr) {
+			var jo = (JsonObject)jv;
+			res.put(jo.getString("key"), jo.getString("value") );
+		}
+		System.out.println(res);
+	}
 
 }

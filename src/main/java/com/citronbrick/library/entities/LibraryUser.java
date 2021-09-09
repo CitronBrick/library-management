@@ -20,9 +20,8 @@ public class LibraryUser implements Serializable, UserDetails {
 	@Column(unique=true)
 	private String username;
 	private String password;
-	private String author;
 
-	@ManyToMany(mappedBy="borrowers")
+	@ManyToMany(mappedBy="borrowers",fetch=FetchType.EAGER)
 	private List<Book> borrowedBooks = new ArrayList<>();
 
 	private boolean librarian = false;
@@ -40,7 +39,8 @@ public class LibraryUser implements Serializable, UserDetails {
 
 
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		var res = List.<GrantedAuthority>of(new SimpleGrantedAuthority("ROLE_USER"));
+		var res = new ArrayList<GrantedAuthority>();
+		res.add(new SimpleGrantedAuthority("ROLE_USER"));
 		if(librarian) {
 			res.add(new SimpleGrantedAuthority("ROLE_LIBRARIAN"));
 		}

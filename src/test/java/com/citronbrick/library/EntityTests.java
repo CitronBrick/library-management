@@ -45,5 +45,37 @@ class EntityTests {
 		Assertions.assertThat(foundBook).isEqualToComparingOnlyGivenFields(b,"title","author");
 	}
 
+
+	@Test
+	void createAndFindNormalUser() {
+		LibraryUser user = new LibraryUser("Messi","password",false);
+		LibraryUser savedUser = libraryUserRepository.save(user);
+
+		long id = user.getId();
+		Assertions.assertThat(id).isNotNull();
+
+		LibraryUser foundUser = libraryUserRepository.getById(id);
+
+		Assertions.assertThat(foundUser).isEqualToComparingOnlyGivenFields(user,"username","password","librarian");
+	}
+
+	@Test
+	void createAndFindLibrarian() {
+		LibraryUser user = new LibraryUser("Ronaldinho","password",true);
+		LibraryUser savedUser = libraryUserRepository.save(user);
+
+		long id = user.getId();
+		Assertions.assertThat(id).isNotNull();
+		Assertions.assertThat(savedUser.isLibrarian()).isTrue();
+
+		LibraryUser foundUser = libraryUserRepository.getById(id);
+		Assertions.assertThat(foundUser.isLibrarian()).isTrue();
+
+
+		Assertions.assertThat(foundUser).isEqualToComparingOnlyGivenFields(user,"username","password","librarian");
+	}
+
+
+
 	
 }
