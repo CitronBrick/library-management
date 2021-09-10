@@ -49,7 +49,8 @@ public class LibraryUsersInitializationService {
 
 		}
 		userRepository.save(new LibraryUser("sachin", "password"));
-		userRepository.save(new LibraryUser("dravid", "password",true));
+		System.out.println(userRepository.save(new LibraryUser("dravid", "password",true)));
+		System.out.println(userRepository.save(new LibraryUser("gilbert", "password",false)));
 	}
 
 

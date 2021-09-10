@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.*;
 import org.springframework.http.*;
 import org.springframework.test.annotation.*;
 import org.springframework.beans.factory.annotation.*;
+import org.springframework.security.test.web.servlet.setup.*;
 import org.springframework.test.web.servlet.*;
 import org.springframework.test.web.servlet.setup.*;
 import org.springframework.test.web.servlet.request.*;
@@ -20,9 +21,12 @@ import org.springframework.web.context.*;
 import org.springframework.mock.web.*;
 import org.springframework.security.test.web.servlet.request.*;
 import org.springframework.security.core.userdetails.*;
+import org.springframework.security.core.authority.*;
+
 
 import java.util.*;
 import java.io.*;
+import java.net.http.*;
 import javax.json.*;
 import javax.json.bind.*;
 
@@ -34,6 +38,9 @@ public class BookControllerTests {
 	@Autowired
 	private WebApplicationContext context;
 
+	// @Autowired
+	// private BookRepository bookRepository;
+
 
 	@Autowired
 	private Jsonb jsonb;
@@ -41,21 +48,27 @@ public class BookControllerTests {
 	@Autowired
 	private UserDetailsService uds;
 
+
 	// @Autowired MockHttpServletResponse response;
 
 
 	private MockMvc mockMvc;
 	private LibraryUser sachin;
 	private LibraryUser dravid;
+	private LibraryUser gilbert;
+	// private Book clrs;
 
 	@BeforeEach
 	public void setup() {
 		mockMvc = MockMvcBuilders
 			.webAppContextSetup(context)
+			.apply(SecurityMockMvcConfigurers.springSecurity())
 			.build();
 		sachin = (LibraryUser)uds.loadUserByUsername("sachin");
+		gilbert = (LibraryUser)uds.loadUserByUsername("gilbert");
 		dravid = (LibraryUser)uds.loadUserByUsername("dravid");
-		System.out.println(dravid);
+		// clrs = bookRepository.findByTitle("CLRS");
+		// System.out.println(clrs);
 	}
 
 
@@ -95,23 +108,44 @@ public class BookControllerTests {
 
 
 	@Test
-	public void testBorrowBook() throws Exception {
-		var userId = sachin.getId();
-		Assertions.assertThat(sachin.isLibrarian()).isFalse();
-		System.out.println(sachin.getAuthorities());
-		sachin.setLibrarian(true);
-		System.out.println(dravid);
+	public void borrowBookwithLibrarian() throws Exception {
+		var userId = dravid.getId();
+		Assertions.assertThat(dravid.isLibrarian()).isTrue();
+		// System.out.println(dravid.getAuthorities());
 		try {
 
 			mockMvc.perform(
 				MockMvcRequestBuilders
 					.put("/books/2/borrow/"+userId)
-					.with(SecurityMockMvcRequestPostProcessors.user(sachin))
+					.with(SecurityMockMvcRequestPostProcessors.user(dravid))
 			).andExpect(
-				MockMvcResultMatchers.status().isForbidden()
+				MockMvcResultMatchers.status().isOk()
 			);
 		} catch(UnsupportedOperationException uoe) {
 			uoe.printStackTrace();
+		}
+	}
+
+	@Test
+	public void borrowBookwithNormalUser() throws Exception {
+		try {
+
+				
+			var userId = sachin.getId();
+			Assertions.assertThat(sachin.isLibrarian()).isFalse();
+			Assertions.assertThat(sachin.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_LIBRARIAN"))).isFalse();
+
+				mockMvc.perform(
+					MockMvcRequestBuilders
+						.put("/books/2/borrow/"+userId)
+						// .put("/books/"+clrs.getId()+"/borrow/"+userId)
+						.with(SecurityMockMvcRequestPostProcessors.user(sachin))
+				).andExpect(
+					MockMvcResultMatchers.status().isForbidden()
+				);
+			
+		} catch(HttpConnectTimeoutException hcte) {
+			hcte.printStackTrace();
 		}
 	}	
 

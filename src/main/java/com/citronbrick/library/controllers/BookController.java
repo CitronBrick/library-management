@@ -49,13 +49,7 @@ public class BookController {
 	}
 
 	@PutMapping("{bookId}/borrow/{userId}")
-	public boolean borrowBook(@PathVariable("bookId") long bookId, @PathVariable("userId") long userId, @AuthenticationPrincipal(errorOnInvalidType=true) UserDetails user, HttpServletRequest hsr) {
-		for(var i = 0; i < 12; i++)
-		System.out.println("je suis called put");
-		System.out.println(user);
-		System.out.println(hsr);
-		System.out.println(hsr.getRemoteUser());
-		System.out.println(hsr.getMethod());
+	public boolean borrowBook(@PathVariable("bookId") long bookId, @PathVariable("userId") long userId, @AuthenticationPrincipal(errorOnInvalidType=true) UserDetails user) {
 		return bookService.borrowBook(bookId,userId);
 	}
 

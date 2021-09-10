@@ -33,10 +33,12 @@ public class BooksInitializationService {
 	public void saveBooks() {
 		List<Book> bookList = fetchBooks();
 		bookRepository.saveAll(bookList);
+		System.out.println(bookRepository.save(new Book("CLRS","C L R S")));
 	}
 
 	private List<Book> fetchBooks() {
 		List<Book> bookList = new ArrayList<Book>();
+
 		try {
 			HttpRequest req = HttpRequest.newBuilder()
 				.uri(URI.create("https://fakerestapi.azurewebsites.net/api/v1/Authors")).build();
