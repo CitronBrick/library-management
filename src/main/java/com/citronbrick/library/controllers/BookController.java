@@ -53,5 +53,10 @@ public class BookController {
 		return bookService.borrowBook(bookId,userId);
 	}
 
+	@PutMapping("{bookId}/return/{userId}")
+	public boolean returnBook(@PathVariable("bookId") long bookId, @PathVariable("userId") long userId, @AuthenticationPrincipal(errorOnInvalidType=true) UserDetails user) {
+		return bookService.returnBook(bookId,userId);
+	}
+
 }
 

@@ -129,8 +129,6 @@ public class BookControllerTests {
 	@Test
 	public void borrowBookwithNormalUser() throws Exception {
 		try {
-
-				
 			var userId = sachin.getId();
 			Assertions.assertThat(sachin.isLibrarian()).isFalse();
 			Assertions.assertThat(sachin.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_LIBRARIAN"))).isFalse();
@@ -148,6 +146,32 @@ public class BookControllerTests {
 			hcte.printStackTrace();
 		}
 	}	
+
+	@Test
+	public void returnBookwithLibrarian() throws Exception {
+		var userId = dravid.getId();
+		Assertions.assertThat(dravid.isLibrarian()).isTrue();
+		mockMvc.perform(
+			MockMvcRequestBuilders
+				.put("/books/2/return/"+userId)
+				.with(SecurityMockMvcRequestPostProcessors.user(dravid))
+		).andExpect(
+			MockMvcResultMatchers.status().isOk()
+		);
+	}
+
+	@Test
+	public void returnBookwithNormalUser() throws Exception {
+		var userId = sachin.getId();
+		Assertions.assertThat(sachin.isLibrarian()).isFalse();
+		mockMvc.perform(
+			MockMvcRequestBuilders
+				.put("/books/2/return/"+userId)
+				.with(SecurityMockMvcRequestPostProcessors.user(sachin))
+		).andExpect(
+			MockMvcResultMatchers.status().isForbidden()
+		);
+	}
 
 	@Test
 	@Disabled
