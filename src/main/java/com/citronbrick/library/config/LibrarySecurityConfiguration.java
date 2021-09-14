@@ -16,7 +16,10 @@ public class LibrarySecurityConfiguration extends WebSecurityConfigurerAdapter {
 		http.authorizeRequests()
 			.mvcMatchers(HttpMethod.PUT,"/**").hasRole("LIBRARIAN")
 			.mvcMatchers(HttpMethod.POST,"/books/create").permitAll()
-			.mvcMatchers(HttpMethod.GET,"/**").permitAll()
+			.mvcMatchers(HttpMethod.GET,"/books/all").permitAll()
+			.mvcMatchers(HttpMethod.POST,"/users/**").hasRole("LIBRARIAN")
+			.mvcMatchers(HttpMethod.GET,"/users/all**").hasRole("LIBRARIAN")
+			// .mvcMatchers(HttpMethod.GET,"/**").permitAll()
 			.anyRequest().authenticated()
 			.and().csrf().disable();
 	}

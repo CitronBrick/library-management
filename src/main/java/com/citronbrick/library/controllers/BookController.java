@@ -38,6 +38,11 @@ public class BookController {
 		return  bookRepository.findById(bookId).get();
 	}  
 
+	@GetMapping("/author/{author}")
+	public List<Book> getBooksByAuthor(@PathVariable("author") String author) {
+		return bookRepository.findByAuthor(author);
+	}
+
 
 
 	// using reaons in @ResponseStatus causes sendError to be called

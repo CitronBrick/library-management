@@ -10,13 +10,14 @@ import org.springframework.beans.factory.annotation.*;
 import org.springframework.test.context.junit4.*;
 import org.springframework.boot.test.autoconfigure.jdbc.*;
 import org.springframework.boot.test.autoconfigure.orm.jpa.*;
+import org.springframework.transaction.annotation.*;
 
 import com.citronbrick.library.entities.*;
 import com.citronbrick.library.repositories.*;
 import com.citronbrick.library.services.*;
 
-
-@DataJpaTest
+@SpringBootTest
+// @DataJpaTest
 class EntityTests {
 
 	@Autowired
@@ -29,6 +30,7 @@ class EntityTests {
 	
 
 	@Test
+	@Transactional
 	void createAndFindBook() {
 		Book b = new Book();
 		b.setTitle("Pride and Prejudice");
@@ -47,6 +49,7 @@ class EntityTests {
 
 
 	@Test
+	@Transactional
 	void createAndFindNormalUser() {
 		LibraryUser user = new LibraryUser("Messi","password",false);
 		LibraryUser savedUser = libraryUserRepository.save(user);
@@ -60,6 +63,7 @@ class EntityTests {
 	}
 
 	@Test
+	@Transactional
 	void createAndFindLibrarian() {
 		LibraryUser user = new LibraryUser("Ronaldinho","password",true);
 		LibraryUser savedUser = libraryUserRepository.save(user);

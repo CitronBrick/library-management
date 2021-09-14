@@ -173,18 +173,6 @@ public class BookControllerTests {
 		);
 	}
 
-	@Test
-	@Disabled
-	public void testSerial() {
-		var str = "[{\"key\":\"key1\", \"value\":\"value1\"}, {\"key\":\"key2\", \"value\":\"value2\"}, {\"key\":\"keyN\", \"value\":\"valueN\"}]";
-		var reader = Json.createReader(new StringReader(str));
-		var jarr = reader.readArray();
-		var res = new HashMap<String,String>();
-		for(JsonValue jv : jarr) {
-			var jo = (JsonObject)jv;
-			res.put(jo.getString("key"), jo.getString("value") );
-		}
-		System.out.println(res);
-	}
+	
 
 }

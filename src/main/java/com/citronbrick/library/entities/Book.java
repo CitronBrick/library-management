@@ -18,7 +18,7 @@ public class Book implements Serializable {
 	private int availableNbCopies = 1;
 	private int totalNbCopies = 1;
 
-	@ManyToMany
+	@ManyToMany(fetch=FetchType.EAGER)
 	private List<LibraryUser> borrowers = new ArrayList<>();
 
 
