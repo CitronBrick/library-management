@@ -46,7 +46,7 @@ public class UserControllerTests {
 
 	private MockMvc mockMvc;
 
-	private UserDetails sachin, dravid;
+	private LibraryUser sachin, dravid;
 
 	@BeforeEach
 	public void setup() {
@@ -55,8 +55,8 @@ public class UserControllerTests {
 			.apply(SecurityMockMvcConfigurers.springSecurity())
 			.build();
 
-		sachin = uds.loadUserByUsername("sachin");
-		dravid = uds.loadUserByUsername("dravid");
+		sachin = (LibraryUser)uds.loadUserByUsername("sachin");
+		dravid = (LibraryUser)uds.loadUserByUsername("dravid");
 	}
 
 	@Test
@@ -75,6 +75,20 @@ public class UserControllerTests {
 
 		mockMvc
 			.perform(MockMvcRequestBuilders.get("/users/all").with(SecurityMockMvcRequestPostProcessors.user(sachin)))
+			.andExpect(MockMvcResultMatchers.status().isForbidden());
+	}
+
+	@Test
+	public void testGetSingleUser() throws Exception {
+		var dravidId = dravid.getId();
+
+		mockMvc.perform(MockMvcRequestBuilders.get("/users/"+dravidId))
+			.andExpect(MockMvcResultMatchers.status().isForbidden());
+
+		mockMvc.perform(MockMvcRequestBuilders.get("/users/"+dravidId).with(SecurityMockMvcRequestPostProcessors.user(dravid)))
+			.andExpect(MockMvcResultMatchers.status().isOk());
+
+		mockMvc.perform(MockMvcRequestBuilders.get("/users/"+dravidId).with(SecurityMockMvcRequestPostProcessors.user(sachin)))
 			.andExpect(MockMvcResultMatchers.status().isForbidden());
 	}
 
