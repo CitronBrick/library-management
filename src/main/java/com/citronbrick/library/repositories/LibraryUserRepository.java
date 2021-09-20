@@ -16,6 +16,6 @@ public interface LibraryUserRepository extends JpaRepository<LibraryUser, Long> 
 
 	LibraryUser findByUsername(String username);
 
-	
+	LibraryUser findByUsernameAndPassword(String username, String password);	
 	
 }

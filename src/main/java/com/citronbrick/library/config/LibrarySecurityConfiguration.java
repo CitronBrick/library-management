@@ -15,6 +15,7 @@ public class LibrarySecurityConfiguration extends WebSecurityConfigurerAdapter {
 	public void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
 			.mvcMatchers(HttpMethod.PUT,"/**").hasRole("LIBRARIAN")
+			.mvcMatchers(HttpMethod.POST,"/login").permitAll()
 			.mvcMatchers(HttpMethod.POST,"/books/create").permitAll()
 			.mvcMatchers(HttpMethod.GET,"/books/all").permitAll()
 			.mvcMatchers(HttpMethod.POST,"/users/**").hasRole("LIBRARIAN")
