@@ -26,6 +26,7 @@ public class UserController {
 
 	@GetMapping("/all")
 	public List<LibraryUser> getAllUsers(HttpServletRequest hsr) {
+		System.out.println("je suis apppeeeeeeee");
 		return userRepository.findAll();
 	}
 

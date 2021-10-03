@@ -48,6 +48,9 @@ public class BookControllerTests {
 	@Autowired
 	private UserDetailsService uds;
 
+	@Autowired
+	private LibraryUserRepository userRepository;
+
 
 	// @Autowired MockHttpServletResponse response;
 
@@ -56,6 +59,10 @@ public class BookControllerTests {
 	private LibraryUser sachin;
 	private LibraryUser dravid;
 	private LibraryUser gilbert;
+
+	private UserDetails sachinDetails;
+	private UserDetails dravidDetails;
+	private UserDetails gilbertDetails;
 	// private Book clrs;
 
 	@BeforeEach
@@ -64,9 +71,12 @@ public class BookControllerTests {
 			.webAppContextSetup(context)
 			.apply(SecurityMockMvcConfigurers.springSecurity())
 			.build();
-		sachin = (LibraryUser)uds.loadUserByUsername("sachin");
-		gilbert = (LibraryUser)uds.loadUserByUsername("gilbert");
-		dravid = (LibraryUser)uds.loadUserByUsername("dravid");
+		sachinDetails = uds.loadUserByUsername("sachin");
+		gilbertDetails = uds.loadUserByUsername("gilbert");
+		dravidDetails = uds.loadUserByUsername("dravid");
+		sachin = userRepository.findByUsername("sachin");
+		gilbert = userRepository.findByUsername("gilbert");
+		dravid = userRepository.findByUsername("dravid");
 		// clrs = bookRepository.findByTitle("CLRS");
 		// System.out.println(clrs);
 	}
@@ -117,7 +127,7 @@ public class BookControllerTests {
 			mockMvc.perform(
 				MockMvcRequestBuilders
 					.put("/books/2/borrow/"+userId)
-					.with(SecurityMockMvcRequestPostProcessors.user(dravid))
+					.with(SecurityMockMvcRequestPostProcessors.user(dravidDetails))
 			).andExpect(
 				MockMvcResultMatchers.status().isOk()
 			);
@@ -137,7 +147,7 @@ public class BookControllerTests {
 					MockMvcRequestBuilders
 						.put("/books/2/borrow/"+userId)
 						// .put("/books/"+clrs.getId()+"/borrow/"+userId)
-						.with(SecurityMockMvcRequestPostProcessors.user(sachin))
+						.with(SecurityMockMvcRequestPostProcessors.user(sachinDetails))
 				).andExpect(
 					MockMvcResultMatchers.status().isForbidden()
 				);
@@ -154,7 +164,7 @@ public class BookControllerTests {
 		mockMvc.perform(
 			MockMvcRequestBuilders
 				.put("/books/2/return/"+userId)
-				.with(SecurityMockMvcRequestPostProcessors.user(dravid))
+				.with(SecurityMockMvcRequestPostProcessors.user(dravidDetails))
 		).andExpect(
 			MockMvcResultMatchers.status().isOk()
 		);
@@ -167,7 +177,7 @@ public class BookControllerTests {
 		mockMvc.perform(
 			MockMvcRequestBuilders
 				.put("/books/2/return/"+userId)
-				.with(SecurityMockMvcRequestPostProcessors.user(sachin))
+				.with(SecurityMockMvcRequestPostProcessors.user(sachinDetails))
 		).andExpect(
 			MockMvcResultMatchers.status().isForbidden()
 		);

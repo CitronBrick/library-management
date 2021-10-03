@@ -33,7 +33,7 @@ import javax.json.bind.*;
 
 @SpringBootTest
 @DirtiesContext(classMode=DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class UserControllerTests {
+public class LoginControllerTests {
 
 	@Autowired
 	private WebApplicationContext context;
@@ -50,7 +50,6 @@ public class UserControllerTests {
 	private MockMvc mockMvc;
 
 	private LibraryUser sachin, dravid;
-	private UserDetails sachinDetails, dravidDetails;
 
 	@BeforeEach
 	public void setup() {
@@ -59,43 +58,35 @@ public class UserControllerTests {
 			.apply(SecurityMockMvcConfigurers.springSecurity())
 			.build();
 
-		sachinDetails = uds.loadUserByUsername("sachin");
-		dravidDetails = uds.loadUserByUsername("dravid");
+		/*sachin = (LibraryUser)uds.loadUserByUsername("sachin");
+		dravid = (LibraryUser)uds.loadUserByUsername("dravid");*/
 		sachin = userRepository.findByUsername("sachin");
 		dravid = userRepository.findByUsername("dravid");
 	}
 
-	@Test
-	public void testGetAllUsers() throws Exception {
-		Assertions.assertThat(sachin.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_LIBRARIAN"))).isFalse();
-		Assertions.assertThat(dravid.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_LIBRARIAN"))).isTrue();
-
+	@Test 
+	public void testLoginPage() throws Exception {
 		mockMvc
-			.perform(MockMvcRequestBuilders.get("/users/all"))
-			.andExpect(MockMvcResultMatchers.status().isUnauthorized());
-
-		mockMvc
-			.perform(MockMvcRequestBuilders.get("/users/all").with(SecurityMockMvcRequestPostProcessors.user(dravidDetails)))
+			.perform(MockMvcRequestBuilders.get("/"))
 			.andExpect(MockMvcResultMatchers.status().isOk());
-
-
-		mockMvc
-			.perform(MockMvcRequestBuilders.get("/users/all").with(SecurityMockMvcRequestPostProcessors.user(sachinDetails)))
-			.andExpect(MockMvcResultMatchers.status().isForbidden());
 	}
 
 	@Test
-	public void testGetSingleUser() throws Exception {
-		var dravidId = dravid.getId();
+	public void testNormalLogin() throws Exception {
 
-		mockMvc.perform(MockMvcRequestBuilders.get("/users/"+dravidId))
-			.andExpect(MockMvcResultMatchers.status().isUnauthorized());
+		JsonObject sachin = Json.createObjectBuilder()
+			.add("username","sachin")
+			.add("password","password")
+			.build();
 
-		mockMvc.perform(MockMvcRequestBuilders.get("/users/"+dravidId).with(SecurityMockMvcRequestPostProcessors.user(dravidDetails)))
+		mockMvc
+			.perform(MockMvcRequestBuilders
+				.post("/login")
+				.content(sachin.toString())
+				.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(MockMvcResultMatchers.status().isOk());
 
-		mockMvc.perform(MockMvcRequestBuilders.get("/users/"+dravidId).with(SecurityMockMvcRequestPostProcessors.user(sachinDetails)))
-			.andExpect(MockMvcResultMatchers.status().isForbidden());
 	}
+
 
 }

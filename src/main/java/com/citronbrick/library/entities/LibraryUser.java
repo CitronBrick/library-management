@@ -2,16 +2,20 @@ package com.citronbrick.library.entities;
 
 import lombok.*;
 import javax.persistence.*;
+import javax.persistence.Transient;
 import java.io.*;
 import java.util.*;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.security.core.*;
 import org.springframework.security.core.authority.*;
+import org.springframework.security.crypto.password.*;
+import org.springframework.beans.factory.annotation.*;
+import org.springframework.context.*;
 
 @Data
 @NoArgsConstructor
 @Entity
-public class LibraryUser implements Serializable, UserDetails {
+public class LibraryUser implements Serializable{
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
@@ -25,6 +29,13 @@ public class LibraryUser implements Serializable, UserDetails {
 	private List<Book> borrowedBooks = new ArrayList<>();
 
 	private boolean librarian = false;
+
+
+	@Transient
+	private PasswordEncoder encoder;
+
+	@Transient
+	private ApplicationContext context;
 
 
 	public LibraryUser(String username, String password, boolean librarian) {
@@ -46,6 +57,9 @@ public class LibraryUser implements Serializable, UserDetails {
 		}
 		return res;
 	}
+
+
+
 
 	public boolean addBook(Book b) {
 		return borrowedBooks.add(b);

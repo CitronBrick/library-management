@@ -5,7 +5,7 @@ function makeAjaxCall(method, url, body) {
 	if(!['GET','DELETE'].includes(method)) {
 		options['body'] = JSON.stringify(body);
 	}
-	return fetch(url, options).then(res=>res.json())
+	return fetch(url, options).then(res=>{console.log(res);;res.json();})
 }
 
 function BookDescription({book}) {
@@ -16,11 +16,12 @@ function BookDescription({book}) {
 }
 
 
+
 class LoginForm extends React.Component {
 
 	constructor(props) {
 		super(props);
-		this.state = {username:'', password:''};
+		this.state = {username:'', password:'', message: ''};
 		this.handleUsernameChange = this.handleUsernameChange.bind(this);
 		this.handlePasswordChange = this.handlePasswordChange.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
@@ -36,23 +37,45 @@ class LoginForm extends React.Component {
 
 	handleSubmit(evt,context) {
 		evt.preventDefault();
-		makeAjaxCall('POST','/login', {username: this.state.username, password:this.state.password}).then((res)=> {
-			console.log(res);
-			if(res) {
-				console.log('vrai');
-				context.setToken('Basic ' + btoa(this.state.username + ':' + this.state.password));
+		let body =  JSON.stringify({username: this.state.username, password:this.state.password});
+		fetch('/login', {method:'POST', body, headers:{'Content-Type':'application/json'}}).then((res)=> {
+			console.log(res.status);
+			if(res.status == 200) {
+				res.json().then((user)=>{
+					console.log(user);
+					context.setToken('Basic ' + btoa(this.state.username + ':' + this.state.password));
+				});
+			} else if(res.status == 404) {
+				this.setState({message: 'username or password is wrong'});
 			}
 		})
 	}
 
 	render() {
-		// console.log('icic');
 		return <AppContext.Consumer>{(context)=>(
 			<form onSubmit={(evt)=>this.handleSubmit(evt,context)}>
 				<p key="up">username <input type="text" onChange={this.handleUsernameChange} required value={this.state.username} placeholder="Sachin" /></p>
 				<p key="pp">password <input type="password" onChange={this.handlePasswordChange} required value={this.state.password}  /></p>
 				<button key="b" type="submit">Login</button>
+				<output>{this.state.message}</output>
 			</form>
+		)}</AppContext.Consumer>;
+	}
+}
+
+class LogoutButton extends React.Component {
+
+	constructor(props) {
+		super(props);
+	}
+
+	handleClick(evt,context) {
+		context.logout();
+	}
+
+	render() {
+		return <AppContext.Consumer>{(context)=>(
+			<button type="button" onClick={(evt)=>this.handleClick(evt,context)}>Logout</button>
 		)}</AppContext.Consumer>;
 	}
 }
@@ -78,12 +101,18 @@ class BookList extends React.Component {
 	}
 }
 
-class UserList extends React.Component {
+function UserList(props) {
 
-	constructor(props) {
-		super(props);
-		this.state = {users:[]};
-	}
+	let context = React.useContext(AppContext);
+
+	React.useEffect(()=>{
+		console.log('gonaprintcontext componentDidMount ' + context.token);
+		fetch("/users/all", {headers:{'Authorization':context.token}}).then(res=>res.json()).then(u=>{
+			console.log(u);
+		})
+	},[]);
+
+	return <div className="users"></div>;
 }
 
 
@@ -98,13 +127,16 @@ class App extends React.Component {
 				this.setState({token},()=> {
 					console.log(this.state.token);
 				});
+			},
+			logout: ()=>{
+				this.setState({token:''});
 			}
 		};
 		console.log(this.state);
 	}
 
 	render() {
-		let child = (this.state.token)?<BookList/>:<LoginForm/>;
+		let child = (this.state.token)?<React.Fragment><LogoutButton/><BookList/><UserList/></React.Fragment>:<LoginForm/>;
 		console.log(this.state.token);
 		return <AppContext.Provider value={this.state}> 
 			{ child }

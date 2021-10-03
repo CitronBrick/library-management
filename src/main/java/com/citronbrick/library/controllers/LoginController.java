@@ -32,9 +32,12 @@ public class LoginController {
 	}
 
 
-	@PostMapping(value="/login",consumes={MediaType.APPLICATION_JSON_VALUE})
-	public boolean login(@RequestBody Credentials credentials) {
-		return userRepository.findByUsernameAndPassword(credentials.username, credentials.password) != null;
+
+	@PostMapping(value="/login",consumes={MediaType.APPLICATION_JSON_VALUE},produces={MediaType.APPLICATION_JSON_VALUE})
+	public ResponseEntity<LibraryUser> login(@RequestBody Credentials credentials) {
+		var user =  userRepository.findByUsernameAndPassword(credentials.username, credentials.password);
+		var status = (user == null)?HttpStatus.NOT_FOUND:HttpStatus.OK; 
+		return new ResponseEntity<LibraryUser>(user , status);
 	}
 
 }
